@@ -1,0 +1,283 @@
+[
+  {
+    "_id": "admin001",
+    "username": "admin",
+    "password": "$2a$10$BZF0wFDcTE71knr5nFNgAeoid7GiB.xpyNE6uHGUgspmIQ7nLGRo2",
+    "role": "admin",
+    "ownedCards": []
+  },
+  {
+    "_id": "user001",
+    "username": "test",
+    "password": "$2a$10$2L7cQfJmGACW5UAVj1KblOM8/N/Eaicyg8dfLEGXYLf8EpO9NCVTy",
+    "role": "user",
+    "ownedCards": []
+  },
+  {
+    "_id": "mlapwfldzkbfk7pcu",
+    "username": "moneycome",
+    "password": "$2a$10$ioRzbx88dysZ4bRJB7kN0OjmR/nC.285Gu9jcdeZsgsKXcRU0F69W",
+    "role": "user",
+    "ownedCards": [
+      {
+        "cardId": "015",
+        "count": 2
+      },
+      {
+        "cardId": "012",
+        "count": 1
+      },
+      {
+        "cardId": "011",
+        "count": 1
+      },
+      {
+        "cardId": "013",
+        "count": 1
+      },
+      {
+        "cardId": "014",
+        "count": 2
+      },
+      {
+        "cardId": "005",
+        "count": 1
+      },
+      {
+        "cardId": "010",
+        "count": 1
+      },
+      {
+        "cardId": "002",
+        "count": 1
+      },
+      {
+        "cardId": "89055154",
+        "count": 1
+      },
+      {
+        "cardId": "3381441",
+        "count": 1
+      },
+      {
+        "cardId": "46404281",
+        "count": 1
+      },
+      {
+        "cardId": "55878038",
+        "count": 1
+      },
+      {
+        "cardId": "85008676",
+        "count": 1
+      },
+      {
+        "cardId": "11136371",
+        "count": 1
+      },
+      {
+        "cardId": "17032740",
+        "count": 1
+      },
+      {
+        "cardId": "55154344",
+        "count": 1
+      },
+      {
+        "cardId": "97648103",
+        "count": 1
+      },
+      {
+        "cardId": "73964868",
+        "count": 1
+      },
+      {
+        "cardId": "5848934",
+        "count": 1
+      },
+      {
+        "cardId": "91831066",
+        "count": 1
+      },
+      {
+        "cardId": "71607202",
+        "count": 1
+      },
+      {
+        "cardId": "18739764",
+        "count": 1
+      },
+      {
+        "cardId": "35561352",
+        "count": 1
+      },
+      {
+        "cardId": "44932065",
+        "count": 1
+      },
+      {
+        "cardId": "259314",
+        "count": 1
+      },
+      {
+        "cardId": "53085623",
+        "count": 1
+      },
+      {
+        "cardId": "3611830",
+        "count": 1
+      },
+      {
+        "cardId": "57006589",
+        "count": 1
+      },
+      {
+        "cardId": "11110218",
+        "count": 1
+      },
+      {
+        "cardId": "98904974",
+        "count": 1
+      },
+      {
+        "cardId": "20745268",
+        "count": 1
+      },
+      {
+        "cardId": "7512044",
+        "count": 1
+      },
+      {
+        "cardId": "2468169",
+        "count": 1
+      },
+      {
+        "cardId": "92595545",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "_id": "mmlva3f4tjm3inm97",
+    "username": "111",
+    "password": "$2a$10$a7ZvYk/QOAI7wzlgA1MiqOj4HmkkCaH1jdKwKXutSTvzdUYkyfPxq",
+    "role": "user",
+    "ownedCards": [
+      {
+        "cardId": "78084378",
+        "count": 1
+      },
+      {
+        "cardId": "38520918",
+        "count": 1
+      },
+      {
+        "cardId": "73659078",
+        "count": 1
+      },
+      {
+        "cardId": "23782705",
+        "count": 1
+      },
+      {
+        "cardId": "75493362",
+        "count": 1
+      },
+      {
+        "cardId": "53085623",
+        "count": 1
+      },
+      {
+        "cardId": "4019153",
+        "count": 1
+      },
+      {
+        "cardId": "10136446",
+        "count": 1
+      },
+      {
+        "cardId": "82878489",
+        "count": 1
+      },
+      {
+        "cardId": "73507661",
+        "count": 1
+      },
+      {
+        "cardId": "47870325",
+        "count": 1
+      },
+      {
+        "cardId": "89552119",
+        "count": 1
+      },
+      {
+        "cardId": "47233801",
+        "count": 1
+      },
+      {
+        "cardId": "19502505",
+        "count": 1
+      },
+      {
+        "cardId": "41373230",
+        "count": 1
+      },
+      {
+        "cardId": "71249758",
+        "count": 1
+      },
+      {
+        "cardId": "11448373",
+        "count": 1
+      },
+      {
+        "cardId": "13301895",
+        "count": 1
+      },
+      {
+        "cardId": "43175027",
+        "count": 1
+      },
+      {
+        "cardId": "39618799",
+        "count": 1
+      },
+      {
+        "cardId": "8372133",
+        "count": 1
+      },
+      {
+        "cardId": "2792265",
+        "count": 1
+      },
+      {
+        "cardId": "94374859",
+        "count": 1
+      },
+      {
+        "cardId": "75130221",
+        "count": 1
+      },
+      {
+        "cardId": "69572024",
+        "count": 1
+      },
+      {
+        "cardId": "25654671",
+        "count": 1
+      },
+      {
+        "cardId": "1561110",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "_id": "mmmxd2vc9xhjaob1y",
+    "username": "testuser999",
+    "password": "$2a$10$lBGDb9C4rV6p.DBNYFW77.hILzRuYaR7PKdARoiNlPFPaM8a0ahmq",
+    "role": "user",
+    "ownedCards": []
+  }
+]

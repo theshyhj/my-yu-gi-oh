@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<title>百鸽 - 游戏王卡片查询工具</title>
+<meta name="keywords" content="百鸽,游戏王" />
+<meta name="description" content="百鸽是一个简单的小工具，汇总了游戏王官方数据库和 YGOPro 数据库等来源的游戏王卡片信息以供查询卡片，并且可以直达相关网站。" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://s4.zstatic.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha512-Dop/vW3iOtayerlYAqCgkVr2aTr2ErwwTYOvRFUpzl2VhCMJyjQF0Q9TjUXIo6JhuM/3i0vVEt2e/7QQmnHQqw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="/static/f565308cf398168867d27da3f00a14b42d7ec7b5/style.css">
+<link rel="stylesheet" href="/static/f565308cf398168867d27da3f00a14b42d7ec7b5/image.css">
+<link rel="search" href="/OpenSearch.xml" type="application/opensearchdescription+xml" title="百鸽" />
+<link rel="preconnect" href="https://cdn.233.momobako.com/" crossorigin>
+<link rel="dns-prefetch" href="https://cdn.233.momobako.com/">
+</head>
+<body>
+<header class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="title"><a href="/">百鸽</a></h1>
+        </div>
+    </div>
+</header>
+<nav>
+<div id="searchbar">
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 center-block float-none">
+            <form id="card-search" action="/">
+                <div class="input-group">
+                    <input id="card-search-name" name="search" type="text" class="form-control" placeholder="输入卡名..." spellcheck="false" autocomplete="off"
+                        value="">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="name1">百鸽</span>
+                            <span class="name2">查卡</span>
+                        </button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</div>
+<div class="placeholder"></div>
+</nav>
+<main>
+<div class="container api">
+    <div class="row">
+        <div class="col-md-6 center-block float-none">
+            <hr>
+            <h2>百鸽API接口使用说明</h2>
+			<p>百鸽提供了一组简单易用的API接口，方便开发者获取游戏王卡片的相关信息。</p>
+			<p>API版本：v0（不稳定，可能随时更改字段或增加新功能）</p>
+			<hr>
+			<h3>API端点</h3>
+			<p>所有API请求均通过以下基础URL进行访问：<code>https://ygocdb.com/</code>。<br>
+				目前仅支持<code>GET</code>方法，且返回的<code>Access-Control-Allow-Origin</code>始终为<code>*</code>。</p>
+			<hr>
+			<h3>可用的API资源</h3>
+			<ul>
+				<li><a href="#/api/v0/card/:cardId"><code>/api/v0/card/:cardId</code></a> - 获取指定ID的卡片的信息</li>
+				<li><a href="#/api/v0/cards.zip"><code>/api/v0/cards.zip</code></a> - 一次性获取所有卡片的信息</li>
+				<li><a href="#/api/v0/cards.zip.md5"><code>/api/v0/cards.zip.md5</code></a> - 获取上述所有卡片信息的MD5校验值</li>
+				<li><a href="#/api/v0/search"><code>/api/v0/?search=:query</code></a> - 搜索卡片</li>
+				<li><a href="#/api/v0/idChangelog.jsonp"><code>/api/v0/idChangelog.jsonp</code></a> - 获取卡片ID变更记录（JSON格式）</li>
+				<li><a href="#/api/v0/idChangelogArray.jsonp"><code>/api/v0/idChangelogArray.jsonp</code></a> - 获取卡片ID变更记录数组（JSON格式）</li>
+				<li><a href="#/api/v0/idChangelog.txt"><code>/api/v0/idChangelog.txt</code></a> - 获取卡片ID变更记录（纯文本格式）</li>
+			</ul>
+			<hr>
+			<h3>除API外可用的资源</h3>
+			<ul>
+				<li><a href="#/card/cid/:cid"><code>/card/cid/:cid</code></a> - 通过官方数据库cid直达卡片详情页面</li>
+				<li><a href="#/card/name/:name"><code>/card/name/:name</code></a> - 通过卡片名称直达卡片详情页面</li>
+				<li><a href="#cdn.233.momobako.com"><code>cdn.233.momobako.com</code></a> - 卡图CDN</li>
+			</ul>
+			<hr>
+			<h3>申请其他API</h3>
+			<p>如果您需要其他API接口，请<a href="https://mercury233.me/2022/01/27/%E7%99%BE%E9%B8%BD/" target="_blank">在此直接联系我</a>。</p>
+		</div>
+		<div class="col-md-12">
+			<hr>
+			<h3>API详情</h3>
+			<hr>
+			<h4><a class="anchor" id="/api/v0/card/:cardId"></a><code>/api/v0/card/:cardId</code></h4>
+			<p>获取ID（密码）为<code>:cardId</code>的卡片的信息。</p>
+			<p>参数：</p>
+			<ul>
+				<li><code>show</code> - 可选参数，设置为<code>all</code>时返回完整卡片信息</li>
+				<li><code>callback</code> - 可选参数，设置JSONP回调函数名</li>
+			</ul>
+			<p>示例请求：<a href="https://ygocdb.com/api/v0/card/16178681" target="_blank">https://ygocdb.com/api/v0/card/16178681</a></p>
+			<p>JSONP请求：<a href="https://ygocdb.com/api/v0/card/16178681?callback=foo" target="_blank">https://ygocdb.com/api/v0/card/16178681?callback=foo</a></p>
+			<p>完整信息请求：<a href="https://ygocdb.com/api/v0/card/16178681?show=all" target="_blank">https://ygocdb.com/api/v0/card/16178681?show=all</a></p>
+			<p>返回：</p>
+<pre>{
+  "id": 16178681,
+  "data": {
+    "ot": 11,
+    "setcode": 284295321,
+    "type": 16777249,
+    "atk": 2500,
+    "def": 2000,
+    "level": 67371015,
+    "race": 8192,
+    "attribute": 32
+  },
+  "text": {
+    "name": "异色眼灵摆龙",
+    "types": "[怪兽|效果|灵摆] 龙/暗\n[★7] 2500/2000  4/4",
+    "desc": "【灵摆效果】\n这个卡名的①②的灵摆效果1回合各能使用1次。\n①：可以把自己的灵摆怪兽的战斗发生的对自己的战斗伤害变成0。\n②：自己结束阶段才能发动。这张卡破坏，从卡组把1只攻击力1500以下的灵摆怪兽加入手卡。\n【怪兽效果】\n①：这张卡用和对方怪兽的战斗给与对方的战斗伤害变成2倍。"
+  }
+}</pre>
+			<p>字段说明：</p>
+			<ul>
+				<li><code>id</code> - 卡片左下角的密码</li>
+				<li><code>data</code> - 卡片的基本信息，格式与YGOPro相同，许多字段因使用位运算而不直观，请参考<a href="https://github.com/Fluorohydride/ygopro/wiki/%E5%8D%A1%E7%89%87%E6%95%B0%E6%8D%AE%E5%BA%93" target="_blank">YGOPro的Wiki</a></li>
+				<li><code>text</code> - 卡片的文本信息</li>
+			</ul>
+			<hr>
+			<h4><a class="anchor" id="/api/v0/cards.zip"></a><code>/api/v0/cards.zip</code></h4>
+			<p>一次性获取所有卡片的信息。</p>
+			<p>示例请求：<a href="https://ygocdb.com/api/v0/cards.zip" target="_blank">https://ygocdb.com/api/v0/cards.zip</a></p>
+			<p>返回：二进制zip文件，包含<code>cards.json</code></p>
+<pre>{
+  "4007": {
+    "cid": 4007,
+    "id": 89631139,
+    "cn_name": "青眼白龙",
+    "sc_name": "青眼白龙",
+    "md_name": "青眼白龙",
+    "nwbbs_n": "青眼白龙",
+    "cnocg_n": "蓝眼白龙",
+    "jp_ruby": "ブルーアイズ・ホワイト・ドラゴン",
+    "jp_name": "青眼の白龍",
+    "en_name": "Blue-Eyes White Dragon",
+    "text": {
+      "types": "[怪兽|通常] 龙/光\n[★8] 3000/2500",
+      "pdesc": "",
+      "desc": "以高攻击力著称的传说之龙。任何对手都能粉碎，其破坏力不可估量。"
+    },
+    "data": {
+      "ot": 11,
+      "setcode": 221,
+      "type": 17,
+      "atk": 3000,
+      "def": 2500,
+      "level": 8,
+      "race": 8192,
+      "attribute": 16
+    }
+  },
+  "4008": {
+...
+</pre>
+			<p>字段说明：</p>
+			<ul>
+				<li><code>cid</code> - 卡片的官方数据库唯一标识符</li>
+				<li><code>cn_name</code> - 卡片的中文名称，即YGOPro译名</li>
+				<li><code>sc_name</code> - 卡片的官方简体中文名称</li>
+				<li><code>md_name</code> - 卡片的Master Duel中文名称（与上述官方简中名称经常有格式上的误差，或更新不及时）</li>
+				<li><code>nwbbs_n</code> - 卡片的NWBBS论坛译名</li>
+				<li><code>cnocg_n</code> - 卡片的CNOCG论坛译名</li>
+				<li><code>wiki_en</code> - 卡片的Yugipedia英文名称，正式发售的卡无此字段</li>
+				<li>略</li>
+			</ul>
+			<hr>
+			<h4><a class="anchor" id="/api/v0/cards.zip.md5"></a><code>/api/v0/cards.zip.md5</code></h4>
+			<p>获取上述所有卡片信息的MD5校验值。</p>
+			<p>返回值为压缩包中<code>cards.json</code>文件的MD5校验值。如果您准备在您的项目的客户端自动化获取cards.zip，请务必校验MD5值，仅在有更新时重新下载。</p>
+			<p>示例请求：<a href="https://ygocdb.com/api/v0/cards.zip.md5" target="_blank">https://ygocdb.com/api/v0/cards.zip.md5</a></p>
+			<hr>
+			<h4><a class="anchor" id="/api/v0/search"></a><code>/api/v0/?search=:query</code></h4>
+			<p>搜索卡片。</p>
+			<p>参数：</p>
+			<ul>
+				<li><code>search</code> - 搜索关键词，可以是卡片名称、效果文本等，也支持卡片密码和cid</li>
+				<li><code>start</code> - 返回结果的起始位置，默认为0</li>
+				<li><code>callback</code> - 可选参数，设置JSONP回调函数名</li>
+			</ul>
+			<p>示例请求：<a href="https://ygocdb.com/api/v0/?search=青眼白龙" target="_blank">https://ygocdb.com/api/v0/?search=青眼白龙</a></p>
+			<p>返回：</p>
+<pre>{
+  "result": [
+    {
+      "cid": 4007,
+      "id": 89631139,
+      "cn_name": "青眼白龙",
+      "sc_name": "青眼白龙",
+      "md_name": "青眼白龙",
+      "nwbbs_n": "青眼白龙",
+      "cnocg_n": "蓝眼白龙",
+      "jp_ruby": "ブルーアイズ・ホワイト・ドラゴン",
+      "jp_name": "青眼の白龍",
+      "en_name": "Blue-Eyes White Dragon",
+      "text": {
+        "types": "[怪兽|通常] 龙/光\n[★8] 3000/2500",
+        "pdesc": "",
+        "desc": "以高攻击力著称的传说之龙。任何对手都能粉碎，其破坏力不可估量。"
+      },
+      "data": {
+        "ot": 11,
+        "setcode": 221,
+        "type": 17,
+        "atk": 3000,
+        "def": 2500,
+        "level": 8,
+        "race": 8192,
+        "attribute": 16
+      },
+      "html": {
+        "pdesc": "",
+        "desc": "以高攻击力著称的传说之龙。任何对手都能粉碎，其破坏力不可估量。",
+        "refer": {
+
+        }
+      },
+      "weight": 100,
+      "faqs": [
+        "23215",
+        "6244"
+      ],
+      "artid": 0
+    },
+    {
+      "cid": 8864,
+      "id": 9433350,
+      "cn_name": "罪 青眼白龙",
+      "sc_name": "Sin 青眼白龙",
+      "md_name": "Sin 青眼白龙",
+      "nwbbs_n": "罪 青眼白龙",
+      "cnocg_n": "Sin 蓝眼白龙",
+      "jp_ruby": "シン ブルーアイズ・ホワイト・ドラゴン",
+      "jp_name": "Sin 青眼の白龍",
+      "en_name": "Malefic Blue-Eyes White Dragon",
+      "text": {
+        "types": "[怪兽|效果|特殊召唤] 龙/暗\n[★8] 3000/2500",
+        "pdesc": "",
+        "desc": "这张卡不能通常召唤。从卡组把1只「青眼白龙」除外的场合可以特殊召唤。\r\n①：「罪」怪兽在场上只能有1只表侧表示存在。\r\n②：只要这张卡在怪兽区域存在，其他的自己怪兽不能攻击宣言。\r\n③：没有场地魔法卡表侧表示存在的场合这张卡破坏。"
+      },
+      "data": {
+        "ot": 11,
+        "setcode": 14483491,
+        "type": 33554465,
+        "atk": 3000,
+        "def": 2500,
+        "level": 8,
+        "race": 8192,
+        "attribute": 32
+      },
+      "html": {
+        "pdesc": "",
+        "desc": "这张卡不能通常召唤。从卡组把1只「\u003Ca href=\"/card/89631139\" data-refer=\"89631139\" data-toggle=\"tooltip\" target=\"_blank\" lang=\"zh-Hans\"\u003E青眼白龙\u003C/a\u003E」除外的场合可以特殊召唤。\u003Cbr\u003E①：「\u003Ca href=\"/?search=罪\" target=\"_blank\" class=\"search\"\u003E罪\u003C/a\u003E」怪兽在场上只能有1只表侧表示存在。\u003Cbr\u003E②：只要这张卡在怪兽区域存在，其他的自己怪兽不能攻击宣言。\u003Cbr\u003E③：没有场地魔法卡表侧表示存在的场合这张卡破坏。",
+        "refer": {
+          "89631139": true
+        }
+      },
+      "weight": 90,
+      "faqs": [
+        "22471",
+        "9227"
+      ],
+      "artid": 0
+    }
+  ],
+  "next": 2
+}</pre>
+			<p>字段说明：</p>
+			<ul>
+				<li><code>result</code> - 搜索结果数组</li>
+				<li><code>next</code> - 搜索结果按权重分页，此参数表示下一页的起始位置，0表示没有更多结果</li>
+				<li><code>weight</code> - 匹配权重，100表示完全匹配</li>
+			</ul>
+			<hr>
+			<h4><a class="anchor" id="/api/v0/idChangelog.jsonp"></a><code>/api/v0/idChangelog.jsonp</code></h4>
+			<p>获取卡片ID变更记录，以JSON或JSONP格式返回。</p>
+			<p>部分新发售的卡片会暂时使用YGOPro先行卡的ID，这种ID为9位数字，会在不久修改为实际卡片密码，可在此处获取修改记录。</p>
+			<p>参数：</p>
+			<ul>
+				<li><code>callback</code> - 可选参数，设置JSONP回调函数名</li>
+			</ul>
+			<p>示例请求：<a href="https://ygocdb.com/api/v0/idChangelog.jsonp" target="_blank">https://ygocdb.com/api/v0/idChangelog.jsonp</a></p>
+			<p>返回：包含旧ID到新ID映射关系的JSON对象。</p>
+			<hr>
+			<h4><a class="anchor" id="/api/v0/idChangelogArray.jsonp"></a><code>/api/v0/idChangelogArray.jsonp</code></h4>
+			<p>获取卡片ID变更记录的数组形式，以JSON或JSONP格式返回。</p>
+			<p>参数：</p>
+			<ul>
+				<li><code>callback</code> - 可选参数，设置JSONP回调函数名</li>
+			</ul>
+			<p>示例请求：<a href="https://ygocdb.com/api/v0/idChangelogArray.jsonp" target="_blank">https://ygocdb.com/api/v0/idChangelogArray.jsonp</a></p>
+			<p>返回：包含相同长度的旧ID数组和新ID数组的JSON对象。</p>
+			<hr>
+			<h4><a class="anchor" id="/api/v0/idChangelog.txt"></a><code>/api/v0/idChangelog.txt</code></h4>
+			<p>获取卡片ID变更记录的纯文本格式。</p>
+			<p>示例请求：<a href="https://ygocdb.com/api/v0/idChangelog.txt" target="_blank">https://ygocdb.com/api/v0/idChangelog.txt</a></p>
+			<p>返回：纯文本格式的ID变更记录，每行一条记录。</p>
+			<hr>
+			<h3>其他资源</h3>
+			<hr>
+			<h4><a class="anchor" id="/card/cid/:cid"></a><code>/card/cid/:cid</code></h4>
+			<p>直达<code>:cid</code>对应卡片详情页面。</p>
+			<p>示例请求：<a href="https://ygocdb.com/card/cid/4007" target="_blank">https://ygocdb.com/card/cid/4007</a></p>
+			<hr>
+			<h4><a class="anchor" id="/card/name/:name"></a><code>/card/name/:name</code></h4>
+			<p>直达卡片名称<code>:name</code>对应卡片详情页面。</p>
+			<p>示例请求：<a href="https://ygocdb.com/card/name/青眼白龙" target="_blank">https://ygocdb.com/card/name/青眼白龙</a></p>
+			<hr>
+			<h4><a class="anchor" id="cdn.233.momobako.com"></a><code>cdn.233.momobako.com</code></h4>
+			<p>卡图CDN。</p>
+			<p>服务器是自费的，请合理使用。商业项目建议自行建立镜像，请联系我。</p>
+			<p>网址：</p>
+			<ul>
+				<li>https://cdn.233.momobako.com/ygopro/pics/<code>cardid</code>.jpg</li>
+				<li>https://cdn.233.momobako.com/ygoimg/jp/<code>cardid</code>.webp</li>
+				<li>https://cdn.233.momobako.com/ygoimg/en/<code>cardid</code>.webp</li>
+				<li>https://cdn.233.momobako.com/ygoimg/sc/<code>cardid</code>.webp</li>
+				<li>https://cdn.233.momobako.com/ygoimg/ygopro/<code>cardid</code>.webp</li>
+			</ul>
+			<p>参数：</p>
+			<ul>
+				<li><code>!half</code> - 200px*290px的缩略图</li>
+				<li><code>!thumb2</code> - 82px*120px的缩略图</li>
+				<li><code>!thumb</code> - 44px*64px的缩略图</li>
+				<li><code>!art</code> - 256px*256px的中间图（仅限/ygopro/pics中图片）</li>
+				<li><code>!artp</code> - 290px*216px的灵摆卡中间图（仅限/ygopro/pics中图片）</li>
+			</ul>
+			<p>示例请求：</p>
+			<ul>
+				<li><a href="https://cdn.233.momobako.com/ygoimg/jp/16178681.webp" target="_blank">https://cdn.233.momobako.com/ygoimg/jp/16178681.webp</a></li>
+				<li><a href="https://cdn.233.momobako.com/ygoimg/ygopro/16178681.webp!half" target="_blank">https://cdn.233.momobako.com/ygoimg/ygopro/16178681.webp!half</a></li>
+				<li><a href="https://cdn.233.momobako.com/ygopro/pics/16178681.jpg!thumb2" target="_blank">https://cdn.233.momobako.com/ygopro/pics/16178681.jpg!thumb2</a></li>
+			</ul>
+			<hr>
+        </div>
+    </div>
+</div>
+</main>
+<footer class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <p><a href="/about">关于百鸽</a> | <a href="/packs">卡包列表</a> | <a href="/api">API</a> | <a href='#' id="settingsLink">设置</a></p>
+            <p>Made with dove by <a href="https://mercury233.me/" target="_blank">Mercury233</a></p>
+        </div>
+    </div>
+</footer>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?ffeed57295ad42a6c491204e1214fc91";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script src="https://s4.zstatic.net/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha512-DUC8yqWf7ez3JD1jszxCWSVB0DMP78eOyBpMa5aJki1bIRARykviOuImIczkxlj1KhVSyS16w2FSQetkD4UU2w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://s4.zstatic.net/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha512-oBTprMeNEKCnqfuqKd6sbvFzmFQtlXS3e0C/RGFV0hD6QzhHV+ODfaQbAlmY6/q0ubbwlAM/nCJjkrgA3waLzg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/static/f565308cf398168867d27da3f00a14b42d7ec7b5/script.js"></script>
+</body>
+</html>
+

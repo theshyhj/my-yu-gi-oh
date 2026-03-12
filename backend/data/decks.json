@@ -1,0 +1,27 @@
+[
+  {
+    "_id": "mlapxhr110g90ioa3",
+    "userId": "mlapwfldzkbfk7pcu",
+    "name": "新卡组",
+    "mainDeck": [],
+    "extraDeck": [],
+    "sideDeck": [],
+    "createdAt": "2026-02-06T10:04:13.981Z"
+  },
+  {
+    "_id": "mmmxms37mer7adlys",
+    "userId": "mmlva3f4tjm3inm97",
+    "name": "白龙",
+    "mainDeck": [
+      "19502505",
+      "47233801",
+      "73507661",
+      "47870325",
+      "89552119"
+    ],
+    "extraDeck": [],
+    "sideDeck": [],
+    "createdAt": "2026-03-12T03:52:47.539Z",
+    "updatedAt": "2026-03-12T06:26:34.372Z"
+  }
+]

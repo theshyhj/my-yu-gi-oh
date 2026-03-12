@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(node seed.js)",
+      "Bash(node server.js)",
+      "Bash(npm run dev)",
+      "WebSearch",
+      "WebFetch(domain:ygoprodeck.com)",
+      "WebFetch(domain:ygocdb.com)",
+      "Bash(node importYgocdb.js)",
+      "Bash(net start MongoDB)",
+      "Bash(node convertYgocdb.js)",
+      "Bash(timeout 3)",
+      "Bash(ping -n 4 127.0.0.)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(npm info yugioh-card)",
+      "Bash(npm install yugioh-card)",
+      "Bash(curl -L -o yugioh-card-assets.zip \"https://github.com/kooriookami/yugioh-card/archive/refs/heads/master.zip\")",
+      "Bash(powershell -Command \"Expand-Archive -Path yugioh-card-assets.zip -DestinationPath . -Force\")",
+      "Bash(tar -xf yugioh-card-assets.zip)",
+      "Bash(python -c \"import zipfile; zipfile.ZipFile\\(''yugioh-card-assets.zip''\\).extractall\\(''.''\\)\")",
+      "Bash(dir yugioh-card-assets.zip)",
+      "Bash(powershell -Command \"Get-Item yugioh-card-assets.zip | Select-Object Length\")",
+      "Bash(powershell -Command \"Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory\\(''yugioh-card-assets.zip'', ''.''\\)\")",
+      "Bash(powershell -Command \"Expand-Archive -LiteralPath ''yugioh-card-assets.zip'' -DestinationPath ''.'' -Force\")",
+      "Bash(npm install:*)",
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(ping:*)"
+    ]
+  }
+}
