@@ -3,34 +3,27 @@
     <Transition name="modal">
       <div v-if="visible" class="modal-overlay" @click.self="$emit('close')">
         <div class="modal-content">
-          <button class="modal-close" @click="$emit('close')">✕</button>
+          <button class="modal-close" @click="$emit('close')" aria-label="关闭">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
 
           <div class="card-detail">
-            <!-- 左侧：卡牌图片 -->
+            <!-- 左侧：卡图 -->
             <div class="card-preview-section">
-              <div class="yugioh-card-large">
-                <div class="card-border-large">
-                  <div class="card-content-large">
-                    <img v-if="card.image" :src="cardImageUrl" :alt="card.name" />
-                    <div v-else class="card-placeholder-large">
-                      <span>{{ card.name?.charAt(0) }}</span>
-                    </div>
-                  </div>
-                </div>
+              <div class="card-image-wrap">
+                <img v-if="card.image" :src="cardImageUrl" :alt="card.name" class="card-img-large" />
+                <div v-else class="card-placeholder-large"><span>{{ card.name?.charAt(0) }}</span></div>
               </div>
-
-              <!-- 稀有度显示 -->
               <div class="rarity-display" :class="`rarity-${card.rarity?.toLowerCase()}`">
-                <span class="rarity-label">稀有度</span>
-                <span class="rarity-value">{{ rarityText }}</span>
+                <span class="rarity-label-text">稀有度</span>
+                <span class="rarity-value-text">{{ rarityText }}</span>
               </div>
             </div>
 
-            <!-- 右侧：详细信息 -->
+            <!-- 右侧：信息 -->
             <div class="card-info-section">
               <h2 class="card-title">{{ card.name }}</h2>
 
-              <!-- 多语言名称 -->
               <div v-if="card.jpName || card.enName" class="card-names">
                 <span v-if="card.jpName" class="alt-name jp">{{ card.jpName }}</span>
                 <span v-if="card.enName" class="alt-name en">{{ card.enName }}</span>
@@ -39,7 +32,7 @@
               <div class="card-meta">
                 <div v-if="card.attribute" class="meta-item">
                   <span class="meta-label">属性</span>
-                  <span class="meta-value attr">{{ card.attribute }}</span>
+                  <span class="meta-value">{{ card.attribute }}</span>
                 </div>
                 <div v-if="card.level && card.monsterType !== '链接'" class="meta-item">
                   <span class="meta-label">{{ card.monsterType === '超量' ? '阶级' : '等级' }}</span>
@@ -66,21 +59,20 @@
               <div v-if="card.type === 'monster'" class="card-stats-large">
                 <div class="stat-box atk">
                   <span class="stat-label">ATK</span>
-                  <span class="stat-value">{{ card.atk ?? '?' }}</span>
+                  <span class="stat-num">{{ card.atk ?? '?' }}</span>
                 </div>
                 <div v-if="card.monsterType !== '链接'" class="stat-box def">
                   <span class="stat-label">DEF</span>
-                  <span class="stat-value">{{ card.def ?? '?' }}</span>
+                  <span class="stat-num">{{ card.def ?? '?' }}</span>
                 </div>
               </div>
 
-              <!-- 灵摆效果 -->
-              <div v-if="card.pendulumEffect" class="card-effect-section pendulum-effect">
+              <div v-if="card.pendulumEffect" class="effect-section pendulum">
                 <h3 class="effect-title">灵摆效果</h3>
                 <p class="effect-text">{{ card.pendulumEffect }}</p>
               </div>
 
-              <div class="card-effect-section">
+              <div class="effect-section">
                 <h3 class="effect-title">{{ card.type === 'monster' ? '怪兽效果' : '卡牌效果' }}</h3>
                 <p class="effect-text">{{ card.effect || '无效果描述' }}</p>
               </div>
@@ -109,7 +101,6 @@ const props = defineProps({
 
 defineEmits(['close'])
 
-// 卡图URL
 const cardImageUrl = computed(() => {
   const img = props.card.image
   if (!img) return ''
@@ -124,47 +115,46 @@ const cardTypeText = computed(() => {
     if (props.card.monsterType) parts.push(props.card.monsterType)
     return parts.join(' / ') || '怪兽'
   }
-  if (props.card.type === 'spell') {
-    return props.card.spellType ? `魔法卡 ${props.card.spellType}` : '魔法卡'
-  }
-  if (props.card.type === 'trap') {
-    return props.card.trapType ? `陷阱卡 ${props.card.trapType}` : '陷阱卡'
-  }
+  if (props.card.type === 'spell') return props.card.spellType ? `魔法卡 ${props.card.spellType}` : '魔法卡'
+  if (props.card.type === 'trap') return props.card.trapType ? `陷阱卡 ${props.card.trapType}` : '陷阱卡'
   return '未知'
 })
 
 const rarityText = computed(() => {
-  const texts = { 'N': '普通', 'R': '稀有', 'SR': '超稀有', 'UR': '极稀有' }
-  return texts[props.card.rarity] || props.card.rarity
+  const t = { 'N': '普通', 'R': '稀有', 'SR': '超稀有', 'UR': '极稀有' }
+  return t[props.card.rarity] || props.card.rarity
 })
 </script>
 
 <style scoped>
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(5px);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: var(--z-modal);
   padding: 20px;
 }
 
 .modal-content {
   position: relative;
-  max-width: 950px;
+  max-width: 920px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  background: linear-gradient(145deg, #1a1a25 0%, #12121a 100%);
-  border-radius: 12px;
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  box-shadow: 0 0 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(212, 175, 55, 0.1);
+  background: var(--color-bg-elevated);
+  backdrop-filter: blur(24px);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  box-shadow: 0 0 80px rgba(0, 0, 0, 0.6), 0 0 40px rgba(212, 175, 55, 0.05);
+}
+
+[data-theme="light"] .modal-content {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.08);
 }
 
 .modal-close {
@@ -173,61 +163,51 @@ const rarityText = computed(() => {
   right: 16px;
   width: 36px;
   height: 36px;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
   color: var(--color-text-secondary);
-  font-size: 1.2rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   z-index: 10;
 }
 
 .modal-close:hover {
-  background: rgba(255, 107, 107, 0.3);
-  color: #ff6b6b;
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: var(--color-danger);
 }
 
 .card-detail {
   display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 40px;
-  padding: 40px;
+  grid-template-columns: 300px 1fr;
+  gap: 36px;
+  padding: 36px;
 }
 
-/* 左侧卡牌预览 */
+/* 左侧 */
 .card-preview-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
 }
 
-/* 卡牌图片展示 */
-.yugioh-card-large {
-  width: 280px;
+.card-image-wrap {
+  width: 260px;
   aspect-ratio: 0.686;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-  transition: transform 0.3s ease;
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.3s var(--ease-out-expo);
 }
 
-.yugioh-card-large:hover {
-  transform: scale(1.02);
-}
+.card-image-wrap:hover { transform: scale(1.02); }
 
-.card-border-large {
-  width: 100%;
-  height: 100%;
-}
-
-.card-content-large {
-  width: 100%;
-  height: 100%;
-}
-
-.card-content-large img {
+.card-img-large {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -240,14 +220,13 @@ const rarityText = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+  background: linear-gradient(135deg, #1a1a2e, #0d0d16);
   font-size: 4rem;
-  font-family: 'Cinzel', serif;
-  color: #d4af37;
-  text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+  font-family: var(--font-display);
+  color: var(--color-gold);
 }
 
-/* 稀有度显示 */
+/* Rarity display */
 .rarity-display {
   display: flex;
   flex-direction: column;
@@ -255,217 +234,32 @@ const rarityText = computed(() => {
   gap: 4px;
 }
 
-.rarity-label {
-  font-size: 0.8rem;
+.rarity-label-text {
+  font-size: 0.75rem;
   color: var(--color-text-muted);
 }
 
-.rarity-value {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.1rem;
+.rarity-value-text {
+  font-family: var(--font-tech);
+  font-size: 1rem;
   font-weight: 600;
 }
 
-.rarity-ur .rarity-value {
-  color: var(--color-gold);
-  text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-}
+.rarity-ur .rarity-value-text { color: var(--color-gold-light); text-shadow: 0 0 12px rgba(255,213,79,0.4); }
+.rarity-sr .rarity-value-text { color: var(--color-purple-light); }
+.rarity-r .rarity-value-text { color: var(--color-blue-light); }
+.rarity-n .rarity-value-text { color: #999; }
 
-.rarity-sr .rarity-value { color: #b19cd9; }
-.rarity-r .rarity-value { color: #6bb3e0; }
-.rarity-n .rarity-value { color: #aaa; }
-
-/* 卡牌类型样式 - 大卡 */
-.card-effect-monster .card-border-large {
-  background: linear-gradient(145deg, #d97b3d 0%, #c96a2d 50%, #a85520 100%);
-}
-.card-effect-monster .card-content-large {
-  background: linear-gradient(180deg, #f4a460 0%, #e89050 30%, #d87840 100%);
-}
-
-.card-normal .card-border-large {
-  background: linear-gradient(145deg, #d4a84b 0%, #c9a227 50%, #a08030 100%);
-}
-.card-normal .card-content-large {
-  background: linear-gradient(180deg, #f5deb3 0%, #e8d4a0 30%, #dcc890 100%);
-}
-
-.card-spell .card-border-large {
-  background: linear-gradient(145deg, #1e8b6e 0%, #0d7a5c 50%, #006048 100%);
-}
-.card-spell .card-content-large {
-  background: linear-gradient(180deg, #1e9b7e 0%, #0d8a6c 30%, #007858 100%);
-}
-.card-spell .card-name-large,
-.card-spell .card-type-text-large {
-  color: #f0f0f0;
-}
-.card-spell .card-desc-box-large {
-  background: linear-gradient(180deg, #e8f5e9 0%, #c8e6c9 100%);
-}
-.card-spell .card-stats-row-large {
-  background: linear-gradient(180deg, #c8e6c9 0%, #a5d6a7 100%);
-}
-
-.card-trap .card-border-large {
-  background: linear-gradient(145deg, #b8508a 0%, #a04078 50%, #803060 100%);
-}
-.card-trap .card-content-large {
-  background: linear-gradient(180deg, #c86098 0%, #b05088 30%, #984078 100%);
-}
-.card-trap .card-name-large,
-.card-trap .card-type-text-large {
-  color: #f0f0f0;
-}
-.card-trap .card-desc-box-large {
-  background: linear-gradient(180deg, #fce4ec 0%, #f8bbd9 100%);
-}
-.card-trap .card-stats-row-large {
-  background: linear-gradient(180deg, #f8bbd9 0%, #f48fb1 100%);
-}
-
-.card-ritual .card-border-large {
-  background: linear-gradient(145deg, #4a7dc4 0%, #3a6db4 50%, #2a5d9a 100%);
-}
-.card-ritual .card-content-large {
-  background: linear-gradient(180deg, #6a9dd4 0%, #5a8dc4 30%, #4a7db4 100%);
-}
-.card-ritual .card-name-large {
-  color: #f0f0f0;
-}
-.card-ritual .card-desc-box-large {
-  background: linear-gradient(180deg, #e3f2fd 0%, #bbdefb 100%);
-}
-.card-ritual .card-stats-row-large {
-  background: linear-gradient(180deg, #bbdefb 0%, #90caf9 100%);
-}
-
-.card-fusion .card-border-large {
-  background: linear-gradient(145deg, #9060b0 0%, #8050a0 50%, #604080 100%);
-}
-.card-fusion .card-content-large {
-  background: linear-gradient(180deg, #a070c0 0%, #9060b0 30%, #8050a0 100%);
-}
-.card-fusion .card-name-large {
-  color: #f0f0f0;
-}
-.card-fusion .card-desc-box-large {
-  background: linear-gradient(180deg, #f3e5f5 0%, #e1bee7 100%);
-}
-.card-fusion .card-stats-row-large {
-  background: linear-gradient(180deg, #e1bee7 0%, #ce93d8 100%);
-}
-
-.card-synchro .card-border-large {
-  background: linear-gradient(145deg, #f0f0f0 0%, #e0e0e0 50%, #c8c8c8 100%);
-}
-.card-synchro .card-content-large {
-  background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 30%, #ebebeb 100%);
-}
-.card-synchro .card-desc-box-large {
-  background: linear-gradient(180deg, #fafafa 0%, #f0f0f0 100%);
-}
-.card-synchro .card-stats-row-large {
-  background: linear-gradient(180deg, #f0f0f0 0%, #e0e0e0 100%);
-}
-
-.card-xyz .card-border-large {
-  background: linear-gradient(145deg, #3a3a3a 0%, #2a2a2a 50%, #1a1a1a 100%);
-}
-.card-xyz .card-content-large {
-  background: linear-gradient(180deg, #2a2a2a 0%, #202020 30%, #181818 100%);
-}
-.card-xyz .card-name-large,
-.card-xyz .card-type-text-large {
-  color: #f0f0f0;
-  text-shadow: none;
-}
-.card-xyz .card-desc-box-large {
-  background: linear-gradient(180deg, #303030 0%, #282828 100%);
-}
-.card-xyz .card-desc-large {
-  color: #d0d0d0;
-}
-.card-xyz .card-stats-row-large {
-  background: linear-gradient(180deg, #282828 0%, #202020 100%);
-}
-.card-xyz .stat-atk-large,
-.card-xyz .stat-def-large,
-.card-xyz .card-id-large {
-  color: #d0d0d0;
-}
-
-.card-pendulum .card-border-large {
-  background: linear-gradient(180deg, #d97b3d 0%, #c96a2d 40%, #1e8b6e 60%, #0d7a5c 100%);
-}
-.card-pendulum .card-content-large {
-  background: linear-gradient(180deg, #f4a460 0%, #e89050 35%, #1e9b7e 65%, #0d8a6c 100%);
-}
-.card-pendulum .card-desc-box-large {
-  background: linear-gradient(180deg, #e8f5e9 0%, #c8e6c9 100%);
-}
-.card-pendulum .card-stats-row-large {
-  background: linear-gradient(180deg, #c8e6c9 0%, #a5d6a7 100%);
-}
-
-.card-link .card-border-large {
-  background: linear-gradient(145deg, #2060a0 0%, #1050a0 50%, #004080 100%);
-}
-.card-link .card-content-large {
-  background: linear-gradient(180deg, #1868b0 0%, #1058a0 30%, #004890 100%);
-}
-.card-link .card-name-large,
-.card-link .card-type-text-large {
-  color: #f0f0f0;
-}
-.card-link .card-desc-box-large {
-  background: linear-gradient(180deg, #e3f2fd 0%, #bbdefb 100%);
-}
-.card-link .card-stats-row-large {
-  background: linear-gradient(180deg, #bbdefb 0%, #90caf9 100%);
-}
-.card-link .stat-link-large {
-  color: #0066cc;
-  font-weight: 800;
-}
-
-.rarity-display {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-
-.rarity-label {
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
-}
-
-.rarity-value {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.rarity-ur .rarity-value {
-  color: var(--color-gold);
-  text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-}
-
-.rarity-sr .rarity-value { color: #b19cd9; }
-.rarity-r .rarity-value { color: #6bb3e0; }
-.rarity-n .rarity-value { color: #aaa; }
-
-/* 右侧信息区域 */
+/* 右侧信息 */
 .card-info-section {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .card-title {
-  font-family: 'Cinzel', 'Noto Sans SC', serif;
-  font-size: 2rem;
+  font-family: var(--font-display);
+  font-size: 1.8rem;
   font-weight: 700;
   background: var(--gradient-gold-purple);
   -webkit-background-clip: text;
@@ -473,84 +267,108 @@ const rarityText = computed(() => {
   background-clip: text;
 }
 
+.card-names {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: -12px;
+}
+
+.alt-name {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.alt-name.en { font-style: italic; }
+
 .card-meta {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 14px;
 }
 
 .meta-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .meta-label {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .meta-value {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--color-text-primary);
 }
 
-.meta-value.attr {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.level-stars {
+  color: #ffd700;
+  text-shadow: 0 0 5px rgba(255,215,0,0.4);
+}
+
+.pendulum-scale {
+  color: #7cfc00;
+  font-weight: bold;
 }
 
 .card-stats-large {
   display: flex;
-  gap: 20px;
+  gap: 16px;
 }
 
 .stat-box {
   flex: 1;
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
+  padding: 14px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-md);
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .stat-label {
   display: block;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 0.8rem;
+  font-family: var(--font-tech);
+  font-size: 0.75rem;
   color: var(--color-text-muted);
   margin-bottom: 4px;
 }
 
-.stat-value {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.8rem;
+.stat-num {
+  font-family: var(--font-tech);
+  font-size: 1.6rem;
   font-weight: 700;
 }
 
-.stat-box.atk .stat-value { color: #ff6b6b; }
-.stat-box.def .stat-value { color: #4ecdc4; }
+.stat-box.atk .stat-num { color: #ef4444; }
+.stat-box.def .stat-num { color: #22d3ee; }
 
-.card-effect-section {
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+.effect-section {
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.effect-section.pendulum {
+  border-left: 3px solid #7cfc00;
 }
 
 .effect-title {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--color-gold);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
+.pendulum .effect-title { color: #7cfc00; }
+
 .effect-text {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--color-text-secondary);
   line-height: 1.7;
 }
@@ -559,79 +377,26 @@ const rarityText = computed(() => {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px;
-  background: rgba(212, 175, 55, 0.1);
-  border-radius: 8px;
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 14px 18px;
+  background: rgba(212, 175, 55, 0.06);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(212, 175, 55, 0.15);
 }
 
-.owned-label {
-  color: var(--color-text-secondary);
-}
+.owned-label { color: var(--color-text-secondary); font-size: 0.9rem; }
 
 .owned-value {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.5rem;
+  font-family: var(--font-tech);
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--color-gold);
 }
 
-/* 多语言名称 */
-.card-names {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: -16px;
-}
-
-.alt-name {
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
-}
-
-.alt-name.jp {
-  font-family: 'Noto Sans JP', sans-serif;
-}
-
-.alt-name.en {
-  font-style: italic;
-}
-
-/* 星级样式 */
-.level-stars {
-  color: #ffd700;
-  text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
-}
-
-/* 灵摆刻度 */
-.pendulum-scale {
-  color: #7cfc00;
-  font-weight: bold;
-}
-
-/* 灵摆效果区域 */
-.pendulum-effect {
-  border-left: 3px solid #7cfc00;
-}
-
-.pendulum-effect .effect-title {
-  color: #7cfc00;
-}
-
 /* 动画 */
-.modal-enter-active,
-.modal-leave-active {
-  transition: all 0.3s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-enter-from .modal-content,
-.modal-leave-to .modal-content {
-  transform: scale(0.9) translateY(20px);
+.modal-enter-active, .modal-leave-active { transition: all 0.3s var(--ease-out-expo); }
+.modal-enter-from, .modal-leave-to { opacity: 0; }
+.modal-enter-from .modal-content, .modal-leave-to .modal-content {
+  transform: scale(0.92) translateY(16px);
 }
 
 @media (max-width: 768px) {
@@ -639,14 +404,10 @@ const rarityText = computed(() => {
     grid-template-columns: 1fr;
     padding: 24px;
   }
-
   .card-preview-section {
-    max-width: 280px;
+    max-width: 260px;
     margin: 0 auto;
   }
-
-  .yugioh-card-large {
-    width: 100%;
-  }
+  .card-image-wrap { width: 100%; }
 }
 </style>

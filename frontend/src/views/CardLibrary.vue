@@ -6,7 +6,10 @@
       <!-- 筛选栏 -->
       <div class="filter-bar">
         <div class="filter-group">
-          <input v-model="searchQuery" type="text" class="input-field search-input" placeholder="搜索卡牌名称..." />
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input v-model="searchQuery" type="text" class="input-field input-with-icon" placeholder="搜索卡牌名称..." />
+          </div>
         </div>
         <div class="filter-group">
           <select v-model="filterType" class="select-field">
@@ -38,12 +41,10 @@
         </div>
       </div>
 
-      <!-- 统计信息和分页控制 -->
+      <!-- 统计 -->
       <div class="stats-bar">
         <span class="stats-text">共 {{ filteredCards.length }} 张卡牌</span>
-        <div class="pagination-info">
-          第 {{ currentPage }} / {{ totalPages }} 页
-        </div>
+        <div class="pagination-info">第 {{ currentPage }} / {{ totalPages }} 页</div>
       </div>
 
       <!-- 卡牌网格 -->
@@ -53,84 +54,40 @@
       </div>
 
       <div v-else-if="filteredCards.length === 0" class="empty-state">
-        <div class="empty-icon">📭</div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48" style="opacity:0.4"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         <p>没有找到符合条件的卡牌</p>
       </div>
 
       <div v-else class="card-grid">
-        <div
-          v-for="card in paginatedCards"
-          :key="card.id"
-          class="card-wrapper"
-          @click="openDetail(card)"
-        >
-          <img
-            v-if="card.image"
-            :src="getCardImageUrl(card.image)"
-            :alt="card.name"
-            class="card-image"
-            @error="handleImageError"
-          />
-          <div v-else class="card-placeholder">
-            <span>{{ card.name?.charAt(0) }}</span>
-          </div>
-          <div class="card-info">
+        <div v-for="card in paginatedCards" :key="card.id" class="card-wrapper" @click="openDetail(card)">
+          <img v-if="card.image" :src="getCardImageUrl(card.image)" :alt="card.name" class="card-image" @error="handleImageError" />
+          <div v-else class="card-placeholder"><span>{{ card.name?.charAt(0) }}</span></div>
+          <div class="card-overlay">
             <div class="card-name">{{ card.name }}</div>
-            <div class="card-rarity">{{ card.rarity }}</div>
+            <div class="card-rarity" :class="`badge-${card.rarity?.toLowerCase()}`">{{ card.rarity }}</div>
           </div>
         </div>
       </div>
 
-      <!-- 分页控制 -->
+      <!-- 分页 -->
       <div v-if="totalPages > 1" class="pagination">
-        <button
-          class="page-btn"
-          :disabled="currentPage === 1"
-          @click="currentPage = 1"
-        >
-          首页
+        <button class="page-btn" :disabled="currentPage === 1" @click="currentPage = 1">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>
         </button>
-        <button
-          class="page-btn"
-          :disabled="currentPage === 1"
-          @click="currentPage--"
-        >
-          上一页
+        <button class="page-btn" :disabled="currentPage === 1" @click="currentPage--">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <div class="page-numbers">
-          <button
-            v-for="page in visiblePages"
-            :key="page"
-            class="page-btn"
-            :class="{ active: page === currentPage }"
-            @click="currentPage = page"
-          >
-            {{ page }}
-          </button>
-        </div>
-        <button
-          class="page-btn"
-          :disabled="currentPage === totalPages"
-          @click="currentPage++"
-        >
-          下一页
+        <button v-for="page in visiblePages" :key="page" class="page-btn" :class="{ active: page === currentPage }" @click="currentPage = page">{{ page }}</button>
+        <button class="page-btn" :disabled="currentPage === totalPages" @click="currentPage++">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
-        <button
-          class="page-btn"
-          :disabled="currentPage === totalPages"
-          @click="currentPage = totalPages"
-        >
-          末页
+        <button class="page-btn" :disabled="currentPage === totalPages" @click="currentPage = totalPages">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
         </button>
       </div>
     </div>
 
-    <!-- 卡牌详情弹窗 -->
-    <CardDetail
-      :visible="showDetail"
-      :card="selectedCard"
-      @close="showDetail = false"
-    />
+    <CardDetail :visible="showDetail" :card="selectedCard" @close="showDetail = false" />
   </div>
 </template>
 
@@ -140,7 +97,6 @@ import { useCardStore } from '../stores/cards'
 import CardDetail from '../components/CardDetail.vue'
 
 const cardStore = useCardStore()
-
 const searchQuery = ref('')
 const filterType = ref('')
 const filterAttribute = ref('')
@@ -162,14 +118,10 @@ const filteredCards = computed(() => {
   })
 })
 
-const totalPages = computed(() => {
-  return Math.ceil(filteredCards.value.length / pageSize)
-})
-
+const totalPages = computed(() => Math.ceil(filteredCards.value.length / pageSize))
 const paginatedCards = computed(() => {
   const start = (currentPage.value - 1) * pageSize
-  const end = start + pageSize
-  return filteredCards.value.slice(start, end)
+  return filteredCards.value.slice(start, start + pageSize)
 })
 
 const visiblePages = computed(() => {
@@ -177,105 +129,71 @@ const visiblePages = computed(() => {
   const maxVisible = 5
   let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2))
   let end = Math.min(totalPages.value, start + maxVisible - 1)
-  
-  if (end - start < maxVisible - 1) {
-    start = Math.max(1, end - maxVisible + 1)
-  }
-  
-  for (let i = start; i <= end; i++) {
-    pages.push(i)
-  }
+  if (end - start < maxVisible - 1) start = Math.max(1, end - maxVisible + 1)
+  for (let i = start; i <= end; i++) pages.push(i)
   return pages
 })
 
-watch([searchQuery, filterType, filterAttribute, filterRarity], () => {
-  currentPage.value = 1
-})
+watch([searchQuery, filterType, filterAttribute, filterRarity], () => { currentPage.value = 1 })
 
 function getCardImageUrl(image) {
   if (!image) return ''
   if (image.startsWith('http')) return image
   return `/img/${image}`
 }
+function handleImageError(e) { e.target.style.display = 'none' }
+function openDetail(card) { selectedCard.value = card; showDetail.value = true }
 
-function handleImageError(e) {
-  e.target.style.display = 'none'
-}
-
-function openDetail(card) {
-  selectedCard.value = card
-  showDetail.value = true
-}
-
-onMounted(() => {
-  cardStore.fetchCards()
-})
+onMounted(() => { cardStore.fetchCards() })
 </script>
 
 <style scoped>
-.card-library-page {
-  padding: 40px 0 80px;
-}
+.card-library-page { padding: 40px 0 80px; }
 
 .filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 24px;
-  padding: 24px;
-  background: rgba(20, 20, 30, 0.6);
-  border-radius: 12px;
+  display: flex; flex-wrap: wrap; gap: 12px;
+  margin-bottom: 24px; padding: 20px;
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.05);
+  border-radius: var(--radius-lg);
 }
-
-.filter-group {
-  flex: 1;
-  min-width: 180px;
+.filter-group { flex: 1; min-width: 170px; }
+.input-wrap { position: relative; }
+.input-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--color-text-muted); pointer-events: none;
 }
-
-.search-input {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23606070' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: 14px center;
-  padding-left: 48px;
-}
+.input-with-icon { padding-left: 44px; }
 
 .stats-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px;
+}
+.stats-text, .pagination-info {
+  color: var(--color-text-muted); font-size: 0.85rem;
 }
 
-.stats-text {
-  color: var(--color-text-secondary);
-  font-size: 0.9rem;
-}
-
-.pagination-info {
-  color: var(--color-text-secondary);
-  font-size: 0.9rem;
-}
-
+/* Card Grid */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 16px;
   margin-bottom: 40px;
 }
 
 .card-wrapper {
   position: relative;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background: rgba(20, 20, 30, 0.4);
+  transition: transform 0.35s var(--ease-out-expo), box-shadow 0.35s ease;
+  background: var(--color-bg-card);
 }
 
 .card-wrapper:hover {
-  transform: translateY(-8px) scale(1.05);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.3);
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: var(--shadow-card-hover);
   z-index: 10;
 }
 
@@ -292,85 +210,88 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
-  font-size: 3rem;
+  background: linear-gradient(135deg, #1a1a2e 0%, #0d0d16 100%);
+  font-size: 2.5rem;
   font-weight: bold;
-  color: #d4af37;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  color: var(--color-gold);
 }
 
-.card-info {
+.card-overlay {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 8px;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+  padding: 24px 10px 10px;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
-.card-wrapper:hover .card-info {
+.card-wrapper:hover .card-overlay {
   opacity: 1;
 }
 
 .card-name {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #fff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 70%;
+  max-width: 68%;
 }
 
 .card-rarity {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 3px;
-  background: rgba(212, 175, 55, 0.9);
-  color: #000;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
 }
 
+.badge-n { background: rgba(150,150,150,0.8); color: #fff; }
+.badge-r { background: rgba(59,130,246,0.85); color: #fff; }
+.badge-sr { background: rgba(171,71,188,0.85); color: #fff; }
+.badge-ur { background: linear-gradient(135deg, #ffd54f, #d4af37); color: #0a0a0f; }
+
+/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-top: 40px;
 }
 
-.page-numbers {
-  display: flex;
-  gap: 4px;
-}
-
 .page-btn {
-  padding: 8px 16px;
-  background: rgba(20, 20, 30, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  color: var(--color-text);
+  min-width: 38px;
+  height: 38px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-glass);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
+  transition: all 0.25s var(--ease-out-expo);
+  font-size: 0.88rem;
 }
 
 .page-btn:hover:not(:disabled) {
-  background: rgba(212, 175, 55, 0.2);
-  border-color: var(--color-gold);
+  background: rgba(212,175,55,0.1);
+  border-color: rgba(212,175,55,0.3);
   color: var(--color-gold);
 }
 
 .page-btn.active {
-  background: var(--color-gold);
-  border-color: var(--color-gold);
-  color: #000;
-  font-weight: 600;
+  background: var(--gradient-gold);
+  border-color: transparent;
+  color: #0a0a0f;
+  font-weight: 700;
 }
 
 .page-btn:disabled {
@@ -378,32 +299,8 @@ onMounted(() => {
   cursor: not-allowed;
 }
 
-.loading-state,
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 20px;
-  color: var(--color-text-secondary);
-}
-
-.loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 3px solid rgba(212, 175, 55, 0.2);
-  border-top-color: var(--color-gold);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
-}
-
-.empty-icon {
-  font-size: 4rem;
-  margin-bottom: 16px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
+@media (max-width: 768px) {
+  .filter-bar { flex-direction: column; }
+  .card-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
 }
 </style>

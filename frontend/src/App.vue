@@ -3,7 +3,7 @@
     <Navbar />
     <main class="main-content">
       <router-view v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
+        <transition name="page" mode="out-in">
           <component :is="Component" />
         </transition>
       </router-view>
@@ -24,16 +24,23 @@ import Navbar from './components/Navbar.vue'
 
 .main-content {
   flex: 1;
-  padding-top: 80px;
+  padding-top: 72px;
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
+.page-enter-active {
+  transition: opacity 0.3s var(--ease-out-expo), transform 0.3s var(--ease-out-expo);
 }
 
-.fade-enter-from,
-.fade-leave-to {
+.page-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-leave-to {
   opacity: 0;
 }
 </style>

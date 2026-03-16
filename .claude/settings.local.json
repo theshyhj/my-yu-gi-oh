@@ -30,7 +30,11 @@
       "Bash(ping:*)",
       "Bash(find:*)",
       "Bash(git push:*)",
-      "Bash(git config:*)"
+      "Bash(git config:*)",
+      "Bash(cd \"D:\\\\测试模板\\\\my-yugioh\" && python3 \"C:\\\\Users\\\\nl009\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"gaming card collection anime yugioh dark fantasy\" --design-system -p \"Yu-Gi-Oh Card Collection\")",
+      "Bash(cd \"D:\\\\测试模板\\\\my-yugioh\" && python3 \"C:\\\\Users\\\\nl009\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"gaming dark fantasy card\" --domain style -n 5)",
+      "Bash(cd \"D:\\\\测试模板\\\\my-yugioh\" && python3 \"C:\\\\Users\\\\nl009\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"gaming anime dark\" --domain color -n 5)",
+      "Bash(cd \"D:\\\\测试模板\\\\my-yugioh\\\\frontend\" && npx vue-tsc --noEmit 2>&1 | head -30 || echo \"vue-tsc not available, trying vite build...\" && npx vite build --mode development 2>&1 | tail -20)"
     ]
   }
 }

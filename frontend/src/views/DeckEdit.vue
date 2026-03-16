@@ -1,9 +1,11 @@
 <template>
   <div class="deck-edit-page">
     <div class="container">
-      <!-- 头部 -->
       <div class="deck-header">
-        <router-link to="/decks" class="back-link">← 返回卡组列表</router-link>
+        <router-link to="/decks" class="back-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
+          返回卡组列表
+        </router-link>
         <input v-model="deckName" type="text" class="deck-name-input" placeholder="卡组名称" @blur="saveDeck" />
         <button @click="saveDeck" class="btn btn-primary" :disabled="saving">
           {{ saving ? '保存中...' : '保存' }}
@@ -13,55 +15,29 @@
       <div class="deck-editor">
         <!-- 左侧：卡组区域 -->
         <div class="deck-area">
-          <!-- 主卡组 -->
           <div class="deck-section">
-            <h3 class="section-title">
-              主卡组 <span class="count" :class="{ 'invalid': !isMainDeckValid }">{{ mainDeck.length }}/40-60</span>
+            <h3 class="section-label">
+              主卡组
+              <span class="count" :class="{ 'invalid': !isMainDeckValid }">{{ mainDeck.length }}/40-60</span>
             </h3>
             <div class="deck-cards">
-              <div
-                v-for="(cardId, index) in mainDeck"
-                :key="`main-${index}`"
-                class="deck-card-slot"
-                @click="removeFromDeck('main', index)"
-                :title="getCard(cardId).name"
-              >
-                <img
-                  v-if="getCard(cardId).image"
-                  :src="getCardImageUrl(getCard(cardId).image)"
-                  :alt="getCard(cardId).name"
-                  class="deck-slot-img"
-                />
-                <div v-else class="deck-slot-placeholder">
-                  {{ getCard(cardId).name?.charAt(0) }}
-                </div>
+              <div v-for="(cardId, index) in mainDeck" :key="`main-${index}`" class="deck-card-slot" @click="removeFromDeck('main', index)" :title="getCard(cardId).name">
+                <img v-if="getCard(cardId).image" :src="getCardImageUrl(getCard(cardId).image)" :alt="getCard(cardId).name" class="deck-slot-img" />
+                <div v-else class="deck-slot-placeholder">{{ getCard(cardId).name?.charAt(0) }}</div>
               </div>
-              <div v-if="mainDeck.length === 0" class="empty-slot">拖入或点击卡牌添加</div>
+              <div v-if="mainDeck.length === 0" class="empty-slot">点击右侧卡牌添加</div>
             </div>
           </div>
 
-          <!-- 额外卡组 -->
           <div class="deck-section">
-            <h3 class="section-title">
-              额外卡组 <span class="count" :class="{ 'invalid': extraDeck.length > 15 }">{{ extraDeck.length }}/15</span>
+            <h3 class="section-label">
+              额外卡组
+              <span class="count" :class="{ 'invalid': extraDeck.length > 15 }">{{ extraDeck.length }}/15</span>
             </h3>
             <div class="deck-cards extra">
-              <div
-                v-for="(cardId, index) in extraDeck"
-                :key="`extra-${index}`"
-                class="deck-card-slot"
-                @click="removeFromDeck('extra', index)"
-                :title="getCard(cardId).name"
-              >
-                <img
-                  v-if="getCard(cardId).image"
-                  :src="getCardImageUrl(getCard(cardId).image)"
-                  :alt="getCard(cardId).name"
-                  class="deck-slot-img"
-                />
-                <div v-else class="deck-slot-placeholder">
-                  {{ getCard(cardId).name?.charAt(0) }}
-                </div>
+              <div v-for="(cardId, index) in extraDeck" :key="`extra-${index}`" class="deck-card-slot" @click="removeFromDeck('extra', index)" :title="getCard(cardId).name">
+                <img v-if="getCard(cardId).image" :src="getCardImageUrl(getCard(cardId).image)" :alt="getCard(cardId).name" class="deck-slot-img" />
+                <div v-else class="deck-slot-placeholder">{{ getCard(cardId).name?.charAt(0) }}</div>
               </div>
               <div v-if="extraDeck.length === 0" class="empty-slot small">额外卡组</div>
             </div>
@@ -70,26 +46,12 @@
 
         <!-- 右侧：卡牌选择 -->
         <div class="card-selector">
-          <h3 class="section-title">我的卡牌</h3>
+          <h3 class="section-label">我的卡牌</h3>
           <input v-model="searchQuery" type="text" class="input-field" placeholder="搜索卡牌..." />
           <div class="selector-cards">
-            <div
-              v-for="item in filteredCollection"
-              :key="item.cardId"
-              class="selector-card"
-              :class="{ 'disabled': !canAddCard(item.card) }"
-              @click="addToDeck(item.card)"
-              :title="item.card.name"
-            >
-              <img
-                v-if="item.card.image"
-                :src="getCardImageUrl(item.card.image)"
-                :alt="item.card.name"
-                class="selector-card-img"
-              />
-              <div v-else class="selector-placeholder">
-                {{ item.card.name?.charAt(0) }}
-              </div>
+            <div v-for="item in filteredCollection" :key="item.cardId" class="selector-card" :class="{ 'disabled': !canAddCard(item.card) }" @click="addToDeck(item.card)" :title="item.card.name">
+              <img v-if="item.card.image" :src="getCardImageUrl(item.card.image)" :alt="item.card.name" class="selector-card-img" />
+              <div v-else class="selector-placeholder">{{ item.card.name?.charAt(0) }}</div>
               <span class="card-count">{{ getCardCountInDeck(item.cardId) }}/{{ item.count }}</span>
             </div>
           </div>
@@ -126,9 +88,7 @@ const filteredCollection = computed(() => {
     .filter(item => item.card && (!searchQuery.value || item.card.name?.includes(searchQuery.value)))
 })
 
-function getCard(cardId) {
-  return cardStore.getCardById(cardId) || {}
-}
+function getCard(cardId) { return cardStore.getCardById(cardId) || {} }
 
 function getCardImageUrl(image) {
   if (!image) return ''
@@ -144,13 +104,11 @@ function canAddCard(card) {
   if (!card) return false
   const countInDeck = getCardCountInDeck(card.id)
   const owned = collectionStore.getCardCount(card.id)
-  if (countInDeck >= 3 || countInDeck >= owned) return false
-  return true
+  return countInDeck < 3 && countInDeck < owned
 }
 
 function isExtraCard(card) {
-  const extraTypes = ['融合', '同调', '超量', '链接']
-  return extraTypes.includes(card.monsterType)
+  return ['融合', '同调', '超量', '链接'].includes(card.monsterType)
 }
 
 function addToDeck(card) {
@@ -178,7 +136,6 @@ async function saveDeck() {
     })
     alert('保存成功！')
   } catch (e) {
-    console.error('保存失败:', e)
     alert('保存失败: ' + (e.response?.data?.message || e.message))
   } finally {
     saving.value = false
@@ -193,7 +150,6 @@ async function fetchDeck() {
     extraDeck.value = res.data.extraDeck || []
     sideDeck.value = res.data.sideDeck || []
   } catch (e) {
-    console.error('加载卡组失败:', e)
     alert('加载卡组失败: ' + (e.response?.data?.message || e.message))
   }
 }
@@ -206,101 +162,104 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.deck-edit-page {
-  padding: 20px 0 80px;
-}
+.deck-edit-page { padding: 20px 0 80px; }
 
 .deck-header {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-bottom: 30px;
+  gap: 16px;
+  margin-bottom: 28px;
 }
 
 .back-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: var(--color-text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
 }
+
+.back-link:hover { color: var(--color-gold); }
 
 .deck-name-input {
   flex: 1;
   max-width: 300px;
-  padding: 12px 16px;
-  font-size: 1.2rem;
+  padding: 10px 16px;
+  font-size: 1.15rem;
   font-weight: 600;
   background: transparent;
   border: none;
-  border-bottom: 2px solid rgba(212,175,55,0.3);
+  border-bottom: 2px solid rgba(212,175,55,0.2);
   color: var(--color-text-primary);
   outline: none;
+  transition: border-color 0.3s ease;
 }
 
-.deck-name-input:focus {
-  border-color: var(--color-gold);
-}
+.deck-name-input:focus { border-color: var(--color-gold); }
 
 .deck-editor {
   display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 30px;
+  grid-template-columns: 1fr 300px;
+  gap: 24px;
 }
 
 .deck-area {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 24px;
 }
 
 .deck-section {
-  background: rgba(20, 20, 30, 0.6);
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: var(--radius-lg);
+  padding: 18px;
 }
 
-.section-title {
-  font-size: 1rem;
+.section-label {
+  font-size: 0.95rem;
   color: var(--color-text-primary);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  font-weight: 600;
 }
 
 .count {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 0.85rem;
+  font-family: var(--font-tech);
+  font-size: 0.8rem;
   color: var(--color-gold);
+  font-weight: 500;
 }
 
-.count.invalid {
-  color: #ff6b6b;
-}
+.count.invalid { color: var(--color-danger); }
 
 .deck-cards {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  min-height: 200px;
+  gap: 6px;
+  min-height: 180px;
 }
 
-.deck-cards.extra {
-  min-height: 80px;
-}
+.deck-cards.extra { min-height: 70px; }
 
 .deck-card-slot {
-  width: 50px;
-  height: 72px;
+  width: 48px;
+  height: 70px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s var(--ease-out-expo);
   border-radius: 4px;
   overflow: hidden;
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  border: 1px solid rgba(212,175,55,0.2);
 }
 
 .deck-card-slot:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+  transform: scale(1.12);
+  box-shadow: 0 4px 12px rgba(212,175,55,0.3);
   z-index: 10;
 }
 
@@ -317,64 +276,63 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
-  font-size: 1.2rem;
+  background: linear-gradient(135deg, #1a1a2e, #0d0d16);
+  font-size: 1.1rem;
   font-weight: bold;
-  color: #d4af37;
+  color: var(--color-gold);
 }
 
 .empty-slot {
   width: 100%;
-  padding: 40px;
+  padding: 36px;
   text-align: center;
   color: var(--color-text-muted);
-  border: 2px dashed rgba(255,255,255,0.1);
-  border-radius: 8px;
+  border: 2px dashed rgba(255,255,255,0.06);
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
 }
 
-.empty-slot.small {
-  padding: 20px;
-}
+.empty-slot.small { padding: 18px; }
 
+/* 右侧选择器 */
 .card-selector {
-  background: rgba(20, 20, 30, 0.6);
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: var(--radius-lg);
+  padding: 18px;
   height: fit-content;
   position: sticky;
   top: 90px;
 }
 
-.card-selector .input-field {
-  margin-bottom: 16px;
-}
+.card-selector .input-field { margin-bottom: 14px; }
 
 .selector-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-  gap: 8px;
-  max-height: 600px;
+  grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+  gap: 6px;
+  max-height: 560px;
   overflow-y: auto;
-  padding: 4px;
+  padding: 2px;
 }
 
 .selector-card {
   position: relative;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s var(--ease-out-expo);
   border-radius: 4px;
   overflow: hidden;
 }
 
 .selector-card:hover:not(.disabled) {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+  transform: scale(1.06);
+  box-shadow: 0 4px 12px rgba(212,175,55,0.2);
   z-index: 10;
 }
 
 .selector-card.disabled {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
@@ -391,32 +349,27 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
-  font-size: 1.5rem;
+  background: linear-gradient(135deg, #1a1a2e, #0d0d16);
+  font-size: 1.3rem;
   font-weight: bold;
-  color: #d4af37;
+  color: var(--color-gold);
 }
 
 .card-count {
   position: absolute;
-  bottom: 4px;
-  right: 4px;
-  padding: 2px 6px;
-  background: rgba(0, 0, 0, 0.9);
+  bottom: 3px;
+  right: 3px;
+  padding: 1px 5px;
+  background: rgba(0,0,0,0.85);
   color: var(--color-gold);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 700;
   border-radius: 3px;
-  border: 1px solid rgba(212, 175, 55, 0.5);
+  border: 1px solid rgba(212,175,55,0.3);
 }
 
 @media (max-width: 900px) {
-  .deck-editor {
-    grid-template-columns: 1fr;
-  }
-
-  .card-selector {
-    position: static;
-  }
+  .deck-editor { grid-template-columns: 1fr; }
+  .card-selector { position: static; }
 }
 </style>
